@@ -26,16 +26,21 @@
         android:layout_below="@+id/btChooseUrls"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="46dp"
-        android:text="@string/download" />
+        android:text="@string/download" 
+        android:onClick="btDownload_onClick"
+        />
 
     <ProgressBar
         android:id="@+id/pbDownloading"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="270dp"
+        android:layout_height="10dp"
         android:layout_below="@+id/btDownload"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="63dp" />
+        android:layout_marginTop="63dp" 
+        android:max="6"
+		android:progressDrawable="@android:drawable/progress_horizontal"
+        />
 
     <Button
         android:id="@+id/btViewPictures"
