@@ -8,5 +8,42 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.zhang.picturedownloader.MainActivity" >
 
+    <Button
+        android:id="@+id/btChooseUrls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:text="@string/choose_urls" 
+        android:onClick="btChooseUrls_onClick"
+        />
+
+    <Button
+        android:id="@+id/btDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btChooseUrls"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
+        android:text="@string/download" />
+
+    <ProgressBar
+        android:id="@+id/pbDownloading"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btDownload"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="63dp" />
+
+    <Button
+        android:id="@+id/btViewPictures"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btChooseUrls"
+        android:layout_below="@+id/pbDownloading"
+        android:layout_marginTop="59dp"
+        android:text="@string/view_pictures" />
 
 </RelativeLayout>
