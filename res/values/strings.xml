@@ -6,6 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="choose_urls">Choose URLs</string>
     <string name="download">Download</string>
+    <string name="cancel_downloads">Cancel Downloads</string>
     <string name="view_pictures">View Pictures</string>
     <string name="title_activity_preference">Choose URLs</string>
     <string name="url1_title">URL 1:</string>
@@ -15,5 +16,9 @@
     <string name="url5_title">URL 5:</string>
     <string name="url6_title">URL 6:</string>
     <string name="url_summary">Please input a URL</string>
+    <string name="dialog_complete_title">Download completed</string>
+    <string name="dialog_cancel_title">Download cancelled</string>
+    <string name="title_activity_pictures_list">PicturesListActivity</string>
+    <string name="title_activity_picture_view">PictureViewActivity</string>
 
 </resources>

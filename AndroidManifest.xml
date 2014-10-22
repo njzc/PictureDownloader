@@ -8,6 +8,8 @@
         android:minSdkVersion="15"
         android:targetSdkVersion="15" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -22,10 +24,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
-            android:name=".ChooseUrlsActivity"
-            ></activity>
-        
+        <activity android:name=".ChooseUrlsActivity" >
+        </activity>
+        <activity
+            android:name=".PicturesListActivity"
+            android:label="@string/title_activity_pictures_list" >
+        </activity>
+        <activity
+            android:name=".PictureViewActivity"
+            android:label="@string/title_activity_picture_view" >
+        </activity>
     </application>
 
 </manifest>

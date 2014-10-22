@@ -1,20 +1,35 @@
 package com.zhang.picturedownloader;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -22,9 +37,14 @@ public class MainActivity extends Activity {
 	private Button btDownload;
 	private Button btViewPictures;
 	private ProgressBar pbDownloading;
-	
+
+	private DownloadTask dt;
+
 	private int progressStatus = 0;
 	private ArrayList<String> urlList = new ArrayList<String>();
+	private int successCount = 0;
+	private boolean isDownloading = false;
+	private ArrayList<String> pictureList = new ArrayList<String>();
 
 	private static final int CHOOSE_URLS_RESULT = 1;
 
@@ -65,7 +85,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
+
 		if (requestCode == CHOOSE_URLS_RESULT) {
 			SharedPreferences sharedPrefs = PreferenceManager
 					.getDefaultSharedPreferences(this);
@@ -74,23 +94,18 @@ public class MainActivity extends Activity {
 			urlList.clear();
 			for (Map.Entry<String, ?> url : urls.entrySet()) {
 				String urlValue = url.getValue().toString();
-				Log.d("url values", url.getKey() + ": "
-						+ urlValue);
-				if ( urlValue.startsWith("http") && urlValue.length() > 10)
-				{
+				Log.d("url values", url.getKey() + ": " + urlValue);
+				if (urlValue.startsWith("http") && urlValue.length() > 10) {
 					urlList.add(urlValue);
 					validUrlCount++;
 				}
 			}
-			
+
 			Log.d("url values", "Valid url count: " + validUrlCount);
-			if ( validUrlCount == 6)
-			{
+			if (validUrlCount == 6) {
 				btDownload.setEnabled(true);
 				btViewPictures.setEnabled(true);
-			}
-			else
-			{
+			} else {
 				btDownload.setEnabled(false);
 				btViewPictures.setEnabled(false);
 			}
@@ -102,21 +117,55 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(MainActivity.this, ChooseUrlsActivity.class);
 		startActivityForResult(intent, CHOOSE_URLS_RESULT);
 	}
-	
-	public void btDownload_onClick(View v)
-	{
-		DownloadTask dt = new DownloadTask();
-		dt.execute();
+
+	public void btDownload_onClick(View v) {
+		if (isDownloading) {
+			dt.cancel(true);
+		} else {
+			dt = new DownloadTask();
+			dt.execute();
+		}
 	}
 	
+	public void btViewPictures_onClick(View v)
+	{
+		Intent intent = new Intent(MainActivity.this, ChooseUrlsActivity.class);
+	}
+
+	private void showDialog(String title, String message) {
+		// show dialog
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				MainActivity.this);
+
+		// set title
+		alertDialogBuilder.setTitle(title);
+
+		// set dialog message
+		alertDialogBuilder.setMessage(message).setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+	}
+
 	private class DownloadTask extends AsyncTask<Void, String, Void> {
 
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
+
+			btDownload.setText(getResources().getString(R.string.cancel_downloads));
 			btChooseUrls.setEnabled(false);
 			btViewPictures.setEnabled(false);
+			isDownloading = true;
 		}
 
 		@Override
@@ -124,7 +173,7 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 			Log.d("Progress Update", values[0]);
 			pbDownloading.setProgress(Integer.valueOf(values[0]));
-			//tvProgress.setText(values[0]);
+			// tvProgress.setText(values[0]);
 			super.onProgressUpdate(values);
 		}
 
@@ -132,25 +181,134 @@ public class MainActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
+
+			showDialog(getResources().getText(R.string.dialog_complete_title)
+					.toString(), "Downloaded " + successCount + " of "
+					+ urlList.size());
+
+			btDownload.setText(getResources().getString(R.string.download));
 			btChooseUrls.setEnabled(true);
 			btViewPictures.setEnabled(true);
+			isDownloading = false;
 		}
+		
+		@Override
+		protected void onCancelled()
+		{
+			btChooseUrls.setEnabled(true);
+			btViewPictures.setEnabled(true);
+
+			btDownload.setText(getResources().getString(R.string.download));
+			showDialog(getResources().getText(R.string.dialog_cancel_title)
+					.toString(), "Downloaded " + successCount + " of "
+					+ urlList.size());
+			isDownloading = false;
+		}
+
 		@Override
 		protected Void doInBackground(Void... result) {
 			// TODO Auto-generated method stub
 
-			for (int i = 0; i < urlList.size(); i++ )
-			{		
+			successCount = 0;
+			for (int i = 0; i < urlList.size(); i++) {
+				if (isCancelled()) {
+					break;
+				}
 				try {
-					Thread.sleep(1000);
+					final String urlString = urlList.get(i);
+					URL url = new URL(urlString);
+					String extFileName = url.getFile().substring(
+							url.getFile().lastIndexOf("."));
+
+					if (downloadPicture(url, i + extFileName)) {
+						successCount++;
+					} else {
+						Handler handler = new Handler(getApplicationContext()
+								.getMainLooper());
+						handler.post(new Runnable() {
+							public void run() {
+								Toast.makeText(getApplicationContext(),
+										"Download failed: " + urlString,
+										Toast.LENGTH_SHORT).show();
+							}
+						});
+					}
+					publishProgress(String.valueOf(i + 1));
+					Thread.sleep(100);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				publishProgress(String.valueOf(i + 1));
 			}
+
 			return null;
 		}
+
 		
+		
+		private boolean downloadPicture(URL url, String outputFileName) {
+			InputStream input = null;
+			FileOutputStream output = null;
+			HttpURLConnection connection = null;
+			try {
+				connection = (HttpURLConnection) url.openConnection();
+				connection.connect();
+
+				if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+					Log.d("download", "response code error: " + url.toString());
+					return false;
+				}
+
+				int fileSize = connection.getContentLength();
+				int total = 0;
+				// download the file
+				input = connection.getInputStream();
+				outputFileName = outputFileName.substring(outputFileName
+						.lastIndexOf("/") + 1);
+				output = openFileOutput(outputFileName, Context.MODE_PRIVATE);
+
+				byte data[] = new byte[4096];
+				int count;
+				while ((count = input.read(data)) != -1) {
+					// allow canceling
+					if (isCancelled()) {
+						input.close();
+						break;
+					}
+					total += count;
+					output.write(data, 0, count);
+				}
+				if ( total == fileSize )
+				{
+					pictureList.add(url.toString());
+					Log.d("download", "download succeed: " + url.toString());
+					return true;
+				}
+				else
+				{
+					Log.d("download", "download failed: " + url.toString());
+					return false;
+				}
+
+			} catch (Exception e) {
+				Log.d("download", "download error: " + e.toString());
+				return false;
+			} finally {
+				try {
+					if (output != null)
+						output.close();
+					if (input != null)
+						input.close();
+				} catch (IOException ioe) {
+				}
+
+				if (connection != null)
+					connection.disconnect();
+			}
+
+		}
 	}
 }

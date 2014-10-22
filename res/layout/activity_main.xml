@@ -33,11 +33,11 @@
     <ProgressBar
         android:id="@+id/pbDownloading"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="270dp"
+        android:layout_width="300dp"
         android:layout_height="10dp"
         android:layout_below="@+id/btDownload"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="63dp" 
+        android:layout_marginTop="64dp" 
         android:max="6"
 		android:progressDrawable="@android:drawable/progress_horizontal"
         />
@@ -48,7 +48,9 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/btChooseUrls"
         android:layout_below="@+id/pbDownloading"
-        android:layout_marginTop="59dp"
-        android:text="@string/view_pictures" />
+        android:layout_marginTop="60dp"
+        android:text="@string/view_pictures" 
+        android:onClick="btViewPictures_onClick"
+        />
 
 </RelativeLayout>
