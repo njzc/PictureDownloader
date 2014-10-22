@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
@@ -44,7 +45,7 @@ public class MainActivity extends Activity {
 	private ArrayList<String> urlList = new ArrayList<String>();
 	private int successCount = 0;
 	private boolean isDownloading = false;
-	private ArrayList<String> pictureList = new ArrayList<String>();
+	private ArrayList<Picture> pictureList;
 
 	private static final int CHOOSE_URLS_RESULT = 1;
 
@@ -129,7 +130,9 @@ public class MainActivity extends Activity {
 	
 	public void btViewPictures_onClick(View v)
 	{
-		Intent intent = new Intent(MainActivity.this, ChooseUrlsActivity.class);
+		Intent intent = new Intent(MainActivity.this, PicturesListActivity.class);
+		intent.putExtra("pictureList", pictureList);
+		startActivity(intent);
 	}
 
 	private void showDialog(String title, String message) {
@@ -210,6 +213,8 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 
 			successCount = 0;
+			pictureList = new ArrayList<Picture>();
+			
 			for (int i = 0; i < urlList.size(); i++) {
 				if (isCancelled()) {
 					break;
@@ -217,10 +222,10 @@ public class MainActivity extends Activity {
 				try {
 					final String urlString = urlList.get(i);
 					URL url = new URL(urlString);
-					String extFileName = url.getFile().substring(
-							url.getFile().lastIndexOf("."));
-
-					if (downloadPicture(url, i + extFileName)) {
+					
+					String fileName = downloadPicture(url);
+					if ( fileName != "") {
+						pictureList.add(new Picture(urlString, fileName));
 						successCount++;
 					} else {
 						Handler handler = new Handler(getApplicationContext()
@@ -249,7 +254,7 @@ public class MainActivity extends Activity {
 
 		
 		
-		private boolean downloadPicture(URL url, String outputFileName) {
+		private String downloadPicture(URL url) {
 			InputStream input = null;
 			FileOutputStream output = null;
 			HttpURLConnection connection = null;
@@ -259,15 +264,15 @@ public class MainActivity extends Activity {
 
 				if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
 					Log.d("download", "response code error: " + url.toString());
-					return false;
+					return "";
 				}
 
+				String outputFileName = url.getFile();
+				outputFileName = outputFileName.substring(outputFileName.lastIndexOf("/") + 1);
 				int fileSize = connection.getContentLength();
 				int total = 0;
 				// download the file
 				input = connection.getInputStream();
-				outputFileName = outputFileName.substring(outputFileName
-						.lastIndexOf("/") + 1);
 				output = openFileOutput(outputFileName, Context.MODE_PRIVATE);
 
 				byte data[] = new byte[4096];
@@ -283,19 +288,18 @@ public class MainActivity extends Activity {
 				}
 				if ( total == fileSize )
 				{
-					pictureList.add(url.toString());
 					Log.d("download", "download succeed: " + url.toString());
-					return true;
+					return outputFileName;
 				}
 				else
 				{
 					Log.d("download", "download failed: " + url.toString());
-					return false;
+					return "";
 				}
 
 			} catch (Exception e) {
 				Log.d("download", "download error: " + e.toString());
-				return false;
+				return "";
 			} finally {
 				try {
 					if (output != null)

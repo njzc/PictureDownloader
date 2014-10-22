@@ -1,16 +1,50 @@
 package com.zhang.picturedownloader;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class PictureViewActivity extends Activity {
+	
+	private Picture picture;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_picture_view);
+		
+		Intent intent = getIntent();
+	    picture= (Picture)intent.getSerializableExtra("picture");
+	    if ( picture != null )
+	    {
+	    	TextView tvUrl = (TextView) findViewById(R.id.tvViewUrl);
+			tvUrl.setText(picture.getUrl());
+			
+			TextView tvFileName = (TextView) findViewById(R.id.tvViewFileName);
+			tvFileName.setText(picture.getFileName());
+			
+			ImageView ivPicture = (ImageView) findViewById(R.id.ivPicture);
+			FileInputStream input;
+			
+			try {
+				input = openFileInput(picture.getFileName());
+				Bitmap bitmap = BitmapFactory.decodeStream(input);
+				ivPicture.setImageBitmap(bitmap);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
 	}
 
 	@Override
