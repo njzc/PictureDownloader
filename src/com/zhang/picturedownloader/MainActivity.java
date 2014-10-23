@@ -105,10 +105,8 @@ public class MainActivity extends Activity {
 			Log.d("url values", "Valid url count: " + validUrlCount);
 			if (validUrlCount == 6) {
 				btDownload.setEnabled(true);
-				btViewPictures.setEnabled(true);
 			} else {
 				btDownload.setEnabled(false);
-				btViewPictures.setEnabled(false);
 			}
 		}
 	}
@@ -185,13 +183,13 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 
+			btChooseUrls.setEnabled(true);
+			btViewPictures.setEnabled(true);
+			
+			btDownload.setText(getResources().getString(R.string.download));
 			showDialog(getResources().getText(R.string.dialog_complete_title)
 					.toString(), "Downloaded " + successCount + " of "
 					+ urlList.size());
-
-			btDownload.setText(getResources().getString(R.string.download));
-			btChooseUrls.setEnabled(true);
-			btViewPictures.setEnabled(true);
 			isDownloading = false;
 		}
 		

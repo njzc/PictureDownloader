@@ -24,23 +24,25 @@ public class PicturesListActivity extends Activity {
 
 	    Intent intent = getIntent();
 	    pictureList = (ArrayList<Picture>)intent.getSerializableExtra("pictureList");
-	    PictureAdapter adapter = new PictureAdapter(this, pictureList);
-	    lvPictures = (ListView) findViewById(R.id.lvPictures);
-	    
-	    lvPictures.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-			
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-			{
-				Intent pictureViewIntent = new Intent(PicturesListActivity.this, PictureViewActivity.class);
-				pictureViewIntent.putExtra("picture", pictureList.get(position));
-				startActivity(pictureViewIntent);
-			}
-			}
-		);
+	    if ( pictureList != null )
+	    {
+		    PictureAdapter adapter = new PictureAdapter(this, pictureList);
+		    lvPictures = (ListView) findViewById(R.id.lvPictures);
 		    
-	    
-	    lvPictures.setAdapter(adapter);
+		    lvPictures.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+				
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+				{
+					Intent pictureViewIntent = new Intent(PicturesListActivity.this, PictureViewActivity.class);
+					pictureViewIntent.putExtra("picture", pictureList.get(position));
+					startActivity(pictureViewIntent);
+				}
+				}
+			);
+			    
+		    lvPictures.setAdapter(adapter);
+	    }
 	}
 
 	@Override
