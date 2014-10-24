@@ -41,7 +41,6 @@ public class MainActivity extends Activity {
 
 	private DownloadTask dt;
 
-	private int progressStatus = 0;
 	private ArrayList<String> urlList = new ArrayList<String>();
 	private int successCount = 0;
 	private boolean isDownloading = false;
@@ -173,8 +172,16 @@ public class MainActivity extends Activity {
 		protected void onProgressUpdate(String... values) {
 			// TODO Auto-generated method stub
 			Log.d("Progress Update", values[0]);
+			String fileName = values[1];
+			String urlString = values[2];
 			pbDownloading.setProgress(Integer.valueOf(values[0]));
-			// tvProgress.setText(values[0]);
+			
+			if ( fileName == "" ) // download file failed
+			{
+				Toast.makeText(getApplicationContext(),
+						"Download failed: " + urlString,
+						Toast.LENGTH_SHORT).show();
+			}
 			super.onProgressUpdate(values);
 		}
 
@@ -225,18 +232,8 @@ public class MainActivity extends Activity {
 					if ( fileName != "") {
 						pictureList.add(new Picture(urlString, fileName));
 						successCount++;
-					} else {
-						Handler handler = new Handler(getApplicationContext()
-								.getMainLooper());
-						handler.post(new Runnable() {
-							public void run() {
-								Toast.makeText(getApplicationContext(),
-										"Download failed: " + urlString,
-										Toast.LENGTH_SHORT).show();
-							}
-						});
 					}
-					publishProgress(String.valueOf(i + 1));
+					publishProgress(String.valueOf(i + 1), fileName, urlString);
 					Thread.sleep(100);
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block

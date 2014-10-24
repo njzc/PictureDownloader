@@ -19,9 +19,15 @@ import android.widget.TextView;
 public class PictureAdapter extends ArrayAdapter<Picture> {
 	private ArrayList<Picture> pictureList;
 
-	private final Context context;
+	private final Activity context;
+	
+	static class ViewHolder {
+	    public TextView tvUrl;
+	    public TextView tvFileName;
+	    public ImageView ivThumbnail;
+	  }
 
-	public PictureAdapter(Context context, ArrayList<Picture> list) {
+	public PictureAdapter(Activity context, ArrayList<Picture> list) {
 		super(context, R.layout.pictures_list_row, list);
 		this.context = context;
 		this.pictureList = list;
@@ -29,26 +35,29 @@ public class PictureAdapter extends ArrayAdapter<Picture> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.pictures_list_row, parent,
-				false);
+		View rowView = convertView;
+		if ( rowView == null ){
+			LayoutInflater inflater = context.getLayoutInflater();
+			rowView = inflater.inflate(R.layout.pictures_list_row,null);
+			ViewHolder viewHolder = new ViewHolder();
+			viewHolder.tvUrl = (TextView) rowView.findViewById(R.id.tvUrl);
+			viewHolder.tvFileName = (TextView) rowView.findViewById(R.id.tvFileName);
+			viewHolder.ivThumbnail = (ImageView) rowView.findViewById(R.id.ivThumbnail);
+			rowView.setTag(viewHolder);
+		}
 		
+		ViewHolder holder = (ViewHolder)rowView.getTag();
 		Picture picture = pictureList.get(position);
 		
-		TextView tvUrl = (TextView) rowView.findViewById(R.id.tvUrl);
-		tvUrl.setText(picture.getUrl());
+		holder.tvUrl.setText(picture.getUrl());
+		holder.tvFileName.setText(picture.getFileName());
 		
-		TextView tvFileName = (TextView) rowView.findViewById(R.id.tvFileName);
-		tvFileName.setText(picture.getFileName());
-		
-		ImageView ivThumbnail = (ImageView) rowView.findViewById(R.id.ivThumbnail);
 		FileInputStream input;
 		
 		try {
 			input = context.openFileInput(picture.getFileName());
 			Bitmap bitmap = BitmapFactory.decodeStream(input);
-			ivThumbnail.setImageBitmap(bitmap);
+			holder.ivThumbnail.setImageBitmap(bitmap);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
