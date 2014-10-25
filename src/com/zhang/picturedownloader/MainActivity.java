@@ -102,10 +102,16 @@ public class MainActivity extends Activity {
 			}
 
 			Log.d("url values", "Valid url count: " + validUrlCount);
+
 			if (validUrlCount == 6) {
 				btDownload.setEnabled(true);
-			} else {
+			}
+			else
+			{
 				btDownload.setEnabled(false);
+				Toast.makeText(getApplicationContext(),
+						getResources().getText(R.string.invalid_urls),
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -179,7 +185,7 @@ public class MainActivity extends Activity {
 			if ( fileName == "" ) // download file failed
 			{
 				Toast.makeText(getApplicationContext(),
-						"Download failed: " + urlString,
+						getResources().getText(R.string.download_failed),
 						Toast.LENGTH_SHORT).show();
 			}
 			super.onProgressUpdate(values);

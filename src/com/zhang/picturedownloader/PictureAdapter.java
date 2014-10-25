@@ -2,6 +2,7 @@ package com.zhang.picturedownloader;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -21,7 +22,7 @@ public class PictureAdapter extends ArrayAdapter<Picture> {
 
 	private final Activity context;
 	
-	static class ViewHolder {
+	private static class ViewHolder {
 	    public TextView tvUrl;
 	    public TextView tvFileName;
 	    public ImageView ivThumbnail;
@@ -57,8 +58,12 @@ public class PictureAdapter extends ArrayAdapter<Picture> {
 		try {
 			input = context.openFileInput(picture.getFileName());
 			Bitmap bitmap = BitmapFactory.decodeStream(input);
+			input.close();
 			holder.ivThumbnail.setImageBitmap(bitmap);
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

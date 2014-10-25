@@ -2,6 +2,7 @@ package com.zhang.picturedownloader;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -39,8 +40,12 @@ public class PictureViewActivity extends Activity {
 			try {
 				input = openFileInput(picture.getFileName());
 				Bitmap bitmap = BitmapFactory.decodeStream(input);
+				input.close();
 				ivPicture.setImageBitmap(bitmap);
 			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

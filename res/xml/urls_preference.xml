@@ -3,32 +3,32 @@
         <EditTextPreference
             android:key="url_1"
             android:summary="@string/url_summary"
-            android:title="@string/url1_title" android:defaultValue="http://"/>
+            android:title="@string/url1_title" />
         
         <EditTextPreference
             android:key="url_2"
             android:summary="@string/url_summary"
-            android:title="@string/url2_title" android:defaultValue="http://"/>
+            android:title="@string/url2_title" />
         
         <EditTextPreference
             android:key="url_3"
             android:summary="@string/url_summary"
-            android:title="@string/url3_title" android:defaultValue="http://"/>
+            android:title="@string/url3_title" />
         
         <EditTextPreference
             android:key="url_4"
             android:summary="@string/url_summary"
-            android:title="@string/url4_title" android:defaultValue="http://"/>
+            android:title="@string/url4_title" />
         
         <EditTextPreference
             android:key="url_5"
             android:summary="@string/url_summary"
-            android:title="@string/url5_title" android:defaultValue="http://"/>
+            android:title="@string/url5_title" />
         
         <EditTextPreference
             android:key="url_6"
             android:summary="@string/url_summary"
-            android:title="@string/url6_title" android:defaultValue="http://"/>
+            android:title="@string/url6_title" />
         
 
 </PreferenceScreen>

@@ -15,10 +15,11 @@
     <string name="url4_title">URL 4</string>
     <string name="url5_title">URL 5</string>
     <string name="url6_title">URL 6</string>
-    <string name="url_summary">Please input a URL</string>
+    <string name="url_summary">Please input a URL, starting with http:// or https://</string>
     <string name="dialog_complete_title">Download completed</string>
     <string name="dialog_cancel_title">Download cancelled</string>
     <string name="title_activity_pictures_list">PicturesListActivity</string>
     <string name="title_activity_picture_view">PictureViewActivity</string>
-
+    <string name="invalid_urls">Some URLs are invalid, please make sure every URL starts with http or https</string>
+    <string name="download_failed">Download failed</string>
 </resources>
